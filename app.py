@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 import os
 import json
+from dotenv import load_dotenv
 
 from flask import Flask, request, redirect, url_for, render_template, jsonify, make_response
 from werkzeug.utils import secure_filename
 from vhf.adif import Adif
 from vhf.activity import Log
 
-UPLOAD_FOLDER = '/tmp'
+# for local development, import ENV variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = os.getenv('TMP', default='/tmp')
 
 @app.route('/', methods=['GET', 'POST'])
 def upload():
