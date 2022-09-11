@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <title>VKV Prevádzkový aktív</title>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js" integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q==" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.fullscreen@1.4.5/Control.FullScreen.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <style>
+    #map { width: 800px; height: 700px; border: 1px solid #ccc }
+    /* one selector per rule as explained here : http://www.sitepoint.com/html5-full-screen-api/ */
+	#map:-webkit-full-screen { width: 100% !important; height: 100% !important; z-index: 99999; }
+	#map:-ms-fullscreen { width: 100% !important; height: 100% !important; z-index: 99999; }
+	#map:full-screen { width: 100% !important; height: 100% !important; z-index: 99999; }
+    #map:fullscreen { width: 100% !important; height: 100% !important; z-index: 99999; }
+	.leaflet-pseudo-fullscreen { position: fixed !important; width: 100% !important; height: 100% !important; top: 0px !important; left: 0px !important; z-index: 99999; }
+	.leaflet-control-zoom-fullscreen { background-image: url(https://github.com/brunob/leaflet.fullscreen/raw/master/icon-fullscreen.png); }
+	.leaflet-retina .leaflet-control-zoom-fullscreen { background-image: url(https://github.com/brunob/leaflet.fullscreen/raw/master/icon-fullscreen-2x.png); background-size: 26px 26px; }
+
+    .triangle {
+      fill: #00c;
+      stroke: #000;
+      stroke-width: 1;
+    }
+
+    .triangle-container{
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    table {
+      border: 1px solid #000;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    td, th {
+      border: 1px solid #000;
+      text-align: left;
+    }
+
+    /* top qsos */
+    tr.top > td:first-of-type {
+        color: #fff;
+        background-color: #ff5800;
+    }
+
+    /* map marker fill */
+    .marker circle {
+        fill: #aaa;
+    }
+
+    .marker_top circle {
+        fill: #ff5800;
+    }
+
+
+
+  </style>
+
+</head>
+<body>
+<h2>Výsledky</h2>
+<table id="results">
+<tr><th>Môj lokátor</th><td><strong>{{ me.gridsquare }}</strong></td></tr>
+<tr><th>Počet originálnych spojení</th><td>{{ scores.original_qso_count }}</td></tr>
+<tr><th>Počet násobičov</th><td>{{ scores.multiplier_count }}</td></tr>
+<tr><th>Body za spojenia</th><td>{{ scores.score }}</td></tr>
+<tr><th>Výsledok (body x násobiče)</th><td>{{ scores.score_multiplied }}</td></tr>
+</table>
+<p><a href="{{ url_for('download_edi', filename=filename) }}?gridsquare={{me.gridsquare}}">Exportovať EDI</a></p>
+
+<h2>Mapa</h2>
+<p>Prvé 3 spojenia na najväčšiu vzdialenosť sú vyznačené červenou.</p>
+<div id='map'></div>
+<div>
+    <p>
+        <label>Násobiče:</label><input type="checkbox" id="switch_multipliers" name="switch_multipliers">
+        <label>Lokátory:</label><input type="checkbox" id="switch_gridsquares" name="switch_gridsquares">
+    </p>
+</div>
+<h2>Spojenia</h2>
+
+<table id="qsos">
+<thead>
+<tr>
+    <th></th>
+    <th>Čas</th>
+    <th>Značka</th>
+    <th>Pásmo</th>
+    <th colspan="2">TX</th>
+    <th colspan="2">RX</th>
+    <th>Lokátor</th>
+    <th>Body</th>
+    <th>Vzdialenosť</th>
+</tr>
+</thead>
+<tbody>
+{% for qso in log.qsos %}
+<tr{% if qso.top_distance %} class="top"{% endif %}>
+    <td>{{ loop.index }}</td>
+    <td>{{ qso.qso_date|date_filter }} {{ qso.time_on|time_filter }}</td>
+    <td><a target="_blank" href="https://www.qrz.com/db/{{ qso.call }}">{{ qso.call }}</a></td>
+    <td>{{ qso.band }}</td>
+    <td>{{ qso.rst_sent }}</td>
+    <td>{{ '%03d' % qso.stx|int }}</td>
+    <td>{{ qso.rst_rcvd }}</td>
+    <td>{{ '%03d' % qso.srx|int }}</td>
+    <td>{{ qso.gridsquare }}</td>
+    <td>{{ qso.points }}</td>
+    <td>{{ qso.distance }}{% if qso.distance %} km{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h2>Násobiče</h2>
+
+<table id="multipliers">
+<thead>
+<tr>
+    <th></th>
+    <th>Lokátor</th>
+</tr>
+</thead>
+<tbody>
+{% for multiplier in scores.multipliers %}
+<tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ multiplier }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<p>
+Ak sa vám program páči alebo nepáči, máte pripomienky, <a href="https://www.qrz.com/db/OM1WS">kontaktujte autora OM1WS</a>.
+</p>
+<p>
+<a href="https://bitbucket.org/yak_sk/sotamaps/src/master/vhf_app/">Zdrojový kód aplikácie</a>
+</p>
+
+<script>
+    $(document).ready(function(){
+
+
+
+    var qsos = {{ web|tojson }};
+    var paint_squares = {{ scores.paint_squares|tojson }};
+    var my_square = {{ log.latlng_large_edges|tojson }};
+    var max_dist = {{ scores.max_dist }};
+
+    // Sorting not required any more, max. 3 distances are
+    // determined in the back-end.
+
+    /*
+    function compare(a, b) {
+        if (a.distance < b.distance) {
+            return -1;
+        }
+        if (a.distance > b.distance) {
+            return 1;
+        }
+        return 0;
+    }
+    qsos.sort(compare).reverse();
+    */
+
+    // let's determine map size according to max distance
+    var zoom = 10;
+    
+    // determine max vertical and horiz distance
+    var max = 0;
+
+    for (var qso in qsos) {
+        if (qsos[qso]['from'] && qsos[qso]['to']) {
+            max = Math.max(
+                Math.abs(qsos[qso]['from'][0] - qsos[qso]['to'][0]),
+                Math.abs(qsos[qso]['from'][1] - qsos[qso]['to'][1]),
+                max
+            );
+        }
+    }
+    var map = L.map('map').setView({{ me.map_center|tojson }}, 6); // zoom=6
+
+    /* fullscreen plugin */
+
+   	// create fullscreen control
+	var fsControl = new L.Control.FullScreen();
+	// add fullscreen control to the map
+	map.addControl(fsControl);
+
+	// detect fullscreen toggling
+	map.on('enterFullscreen', function(){
+		if(window.console) window.console.log('enterFullscreen');
+	});
+	map.on('exitFullscreen', function(){
+		if(window.console) window.console.log('exitFullscreen');
+	});
+
+    /* end fullscreen plugin */
+
+    var myIcon = L.divIcon({
+        className: 'marker', 
+        html: '<div class="triangle-container"><svg height="20" width="20"><circle cx="5" cy="5" r="5" stoke-width="1" stroke="black" /></svg></div>'
+    });
+    var myIconTop = L.divIcon({
+        className: 'marker_top', 
+        html: '<div class="triangle-container"><svg height="20" width="20"><circle cx="5" cy="5" r="5" stoke-width="1" stroke="black" fill="#ff5800" /></svg></div>'
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    /* draw locators */
+
+    var multipliers = [];
+    for (var square in paint_squares) {
+        multipliers.push(L.rectangle(paint_squares[square], {color: "#f00", weight: 1, fillOpacity: 0.1, opacity: 0.3}));
+    }
+    var multipliers_layer = L.layerGroup(multipliers);
+
+    $("#switch_multipliers").change(function() {
+        if(this.checked) {
+            map.addLayer(multipliers_layer);
+        } else {
+            map.removeLayer(multipliers_layer);
+        }
+    });
+
+    /* potentially draw small grid squares */
+    var gridsquares = [];
+    var colors = [
+        '#ffff00',
+        '#80ff00',
+        '#00ff80',
+        '#00ffbf',
+        '#00ffff',
+        '#00bfff',
+        '#0080ff',
+        '#0040ff',
+        '#4000ff',
+        '#8000ff'
+    ];
+
+    for (var d = 1; d <= max_dist; d++) {
+        for (var i = -d; i <= d; i++) {
+            for (var j = -d; j <= d; j++) {
+                if ((Math.abs(j) == d) || (Math.abs(i) == d)) {
+                    gridsquares.push(L.rectangle(
+                        [
+                            [my_square[0][0] + (j*1.0), my_square[0][1] + (i*2.0)], 
+                            [my_square[1][0] + (j*1.0), my_square[1][1] + (i*2.0)]
+                        ], 
+                        {color: colors[d-1], weight: 1, fillOpacity: 0.2, opacity: 0.7}
+                    ));
+                }
+            }
+        }
+    }
+    var gridsquares_layer = L.layerGroup(gridsquares);
+
+    $("#switch_gridsquares").change(function() {
+        if(this.checked) {
+            map.addLayer(gridsquares_layer);
+        } else {
+            map.removeLayer(gridsquares_layer);
+        }
+    });
+
+    for (var qso in qsos) {
+        (function(qso){
+
+            if (qsos[qso]['from'] &&  qsos[qso]['to']) {
+                var icon = myIcon;
+                if (qsos[qso]['top']) { icon = myIconTop;}
+                
+                var polyline = L.polyline(
+                    [
+                        qsos[qso]['from'],
+                        qsos[qso]['to'],
+                    ],
+                    {
+                        color: '#000',
+                        weight: 1,
+                        opacity: .5,
+                        lineJoin: 'round'
+                    }
+                ).addTo(map);
+
+                var marker = L.marker(qsos[qso]['to'], {icon: icon}).addTo(map);
+                marker.on('mouseover', function(e) {
+                    var popup = L.popup()
+                        .setLatLng(e.latlng) 
+                        .setContent('<a target="_blank" href="https://www.qrz.com/db/' + qsos[qso]['call'] + '"><b>' + 
+                            qsos[qso]['call'] + '</b></a><br>'+ qsos[qso]['gridsquare'] + '<br><b>' + qsos[qso]['distance']+' km</b>')
+                        .openOn(map);
+                });
+            }
+        })(qso);
+    }
+});
+</script>
+
+</body>
+</html>
