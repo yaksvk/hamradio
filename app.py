@@ -4,8 +4,8 @@ import json
 
 from flask import Flask, request, redirect, url_for, render_template, jsonify, make_response
 from werkzeug.utils import secure_filename
-from vhf_app.vhf.adif import Adif
-from vhf_app.vhf.activity import Log
+from vhf.adif import Adif
+from vhf.activity import Log
 
 UPLOAD_FOLDER = '/tmp'
 
