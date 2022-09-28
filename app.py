@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
+
 import os
-import json
 from dotenv import load_dotenv
 
 from flask import Flask, request, redirect, url_for, render_template, jsonify, make_response
-from werkzeug.utils import secure_filename
-from vhf.adif import Adif
-from vhf.activity import Log
+
+# import blueprints
+from lib.vkv_pa import vkv_pa
 
 # for local development, import ENV variables from .env file
 load_dotenv()
@@ -14,55 +14,16 @@ load_dotenv()
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = os.getenv('TMP', default='/tmp')
 
-@app.route('/', methods=['GET', 'POST'])
-def upload():
-    if request.method == 'POST':
-        if 'file' in request.files:
-            up_file = request.files['file']
 
-            filename = secure_filename(up_file.filename)
-            up_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_adif',
-                                    filename=filename, gridsquare=request.values.get('gridsquare', None)))
-    return render_template('upload.html')
-
-@app.route('/log/<filename>')
-def uploaded_adif(filename):
-
-    # gridsquare will be guessed from ADIF, if possible, but can be overridden
-    log = Log(
-        request.values.get('gridsquare', None),
-        os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    )
-
-    # create json data for the map
-    web = [{
-        'call': qso.call,
-        'from': log.latlng,
-        'to': qso.latlng,
-        'gridsquare': qso.gridsquare,
-        'distance': qso.distance,
-        'top': qso.top_distance
-    } for qso in log.qsos]
-
+@app.route('/')
+def start():
     return render_template(
-        'vhf_render.html',
-        log=log,
-        web=web,
-        me={'map_center': log.latlng, 'gridsquare': log.gridsquare},
-        scores=log.scores,
-        filename=filename,
+        'index.html',
     )
 
-@app.route('/log/<filename>/export.edi')
-def download_edi(filename):
-    template = render_template('export.edi')
 
-    response = make_response(template)
-    response.headers['Content-Type'] = 'text/plain'
-    response.headers['Content-Disposition'] ='attachment; filename=export.edi'
+app.register_blueprint(vkv_pa, url_prefix="/vkv-prevadzkovy-aktiv")
 
-    return response
 
 # formatters
 @app.template_filter('time_filter')

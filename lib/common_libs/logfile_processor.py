@@ -22,4 +22,3 @@ class LogfileProcessor:
         with open(log_file) as f:
             data = f.read()
         self.init_from_string(data)
-

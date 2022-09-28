@@ -1,37 +1,62 @@
-<!doctype html>
-<html>
-  <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <title>VKV Prevádzkový aktív</title>
-    <style>
+{% extends "master.html" %}
+{% block body %}
+      <div class="jumbotron">
+        <h1>Hamradio Logy</h1>
+        <p>Webová aplikácia pre upload denníkov z rôznych aktivít a závodov. Vstupom je ADIF alebo ručne zadané spojenia, výstupom je skóre alebo súbory, ktoré akceptuje vyhodnocovateľ aktivity.</p>
+      </div>
 
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
 
-      #map {
-        height: 100%;
-      }
-      
-      /* marker icon */
-    .triangle {
-      fill: #00e;
-      stroke: #000;
-      stroke-width: 1;
-
-    .triangle-container{
-      width: 20px;
-      height: 20px;
-      margin: 0;
-      padding: 0;
-    }
-
-    </style>
-  </head>
-  <body>
-    {% block body %}{% endblock %}
-  </body>
-</html>
+      <div class="page-header">
+        <h1>Aktivity</h1>
+      </div>
+      <div class="row equal">
+        <div class="col-md-4">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">VKV Prevádzkový aktív</h3>
+            </div>
+            <div class="panel-body">
+              <p>Pravidelná VKV aktivita každú tretiu stredu v mesiaci. Vyhodnocovateľovi sa na stránke vypĺňa hlásenie.</p>
+              <p class="p-start">
+                <a class="btn btn-lg btn-success" role="button" href="{{ url_for('vkv_pa.vkv_pa_start') }}">Štart</a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">SOTA</h3>
+            </div>
+            <div class="panel-body">
+              <p>Vysielanie z kopcov. Vyhodnocovateľovi sa na stránke SOTAData nahráva ADIF alebo CSV.</p>
+              <p class="p-start"><button type="button" class="btn btn-lg btn-default" disabled="disabled">Pripravuje sa</button></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">SSB Liga</h3>
+            </div>
+            <div class="panel-body">
+              <p>Československá aktivita, ktorá sa koná každú prvú sobotu v mesiaci. Vyhodnocovateľovi sa na stránke nahráva denník vo formáte CABRILLO.</p>
+              <p class="p-start"><button type="button" class="btn btn-lg btn-default" disabled="disabled">Pripravuje sa</button></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row equal">
+        <div class="col-md-4">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">World Wide Flora & Fauna</h3>
+            </div>
+            <div class="panel-body">
+              <p>Vysielanie z chránených území. Vyhodnocovateľom sa e-mailom posiela denník vo formáte ADIF.</p>
+              <p class="p-start"><button type="button" class="btn btn-lg btn-default" disabled="disabled">Pripravuje sa</button></p>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

@@ -45,10 +45,10 @@ class Adif(LogfileProcessor):
         for item in items:
             # process QSO variables
             adif_vars = self.process_adif_variables(item)
-            
+
             # variable postprocessing
             # 1. some software puts SRX and STX to _STRING variables. Attempt to extract these.
-            if ('SRX' not in adif_vars 
+            if ('SRX' not in adif_vars
                 and 'STX' not in adif_vars
                 and 'SRX_STRING' in adif_vars
                 and 'STX_STRING' in adif_vars):
@@ -70,9 +70,6 @@ if __name__ == '__main__':
 
         for qso in adif.qsos:
             print(qso['adif_vars'].get('CALL'))
-            
+
     else:
         print("Please supply filename as an argument")
-
-    
-    
