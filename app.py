@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, redirect, url_for, render_template, jsonify, make_response
 
 # import blueprints
-from lib.vkv_pa import vkv_pa
+from lib.vkv_pa.blueprint import vkv_pa
 
 # for local development, import ENV variables from .env file
 load_dotenv()

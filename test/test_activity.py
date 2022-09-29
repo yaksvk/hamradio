@@ -3,8 +3,8 @@
 import unittest
 import os
 
-from lib.common_libs.hamactivity import HamActivity
-from lib.vkv_pa import VhfActHamActivity
+from lib.common.hamactivity import HamActivity
+from lib.vkv_pa.vhfacthamactivity import VhfActHamActivity
 
 class TestActivity(unittest.TestCase):
 
