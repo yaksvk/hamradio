@@ -17,7 +17,6 @@ class VhfActHamActivity(HamActivity):
         self.meta['scores'] = {}
 
         if self.meta.get('gridsquare'):
-            print('there is gridsquare in meta')
             self.meta['latlng'] = gridsquare2latlng(self.meta['gridsquare'])
             self.meta['latlng_edges'] = gridsquare2latlngedges(self.meta['gridsquare'])
             self.meta['latlng_large_edges'] = gridsquare2latlngedges(self.meta['gridsquare'][0:4])
@@ -44,6 +43,7 @@ class VhfActHamActivity(HamActivity):
 
         # my own gridsquare is a natural multiplier
         orig_gridsquares[self.meta['gridsquare']] = 1
+        orig_large_gridsquares[self.meta['gridsquare'][0:4].upper()] = 1
 
         for qso in self.qsos:
             ident = qso.call + getattr(qso, 'band', getattr(qso, 'freq', ''))

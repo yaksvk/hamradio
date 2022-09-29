@@ -32,6 +32,14 @@ class TestActivity(unittest.TestCase):
         for (q1, q2) in zip(act1.qsos, act2.qsos):
             self.assertDictEqual(vars(q1), vars(q2), 'comparing individual QSOs')
 
+    def test_scores(self):
+        act1 = VhfActHamActivity(adif_file=self.adif1)
+        act1.meta['gridsquare'] = 'JN88nc'
+        act1.calculate_scores()
+        self.assertEqual(act1.meta['scores']['multiplier_count'], 5)
+        self.assertEqual(act1.meta['scores']['score'], 17)
+        self.assertEqual(act1.meta['scores']['score_multiplied'], 85)
+
 
 
 
