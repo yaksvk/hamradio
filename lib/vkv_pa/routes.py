@@ -9,9 +9,11 @@ from .vhfacthamactivity import VhfActHamActivity
 
 vkv_pa = Blueprint('vkv_pa', __name__)
 
+
 @vkv_pa.route('/')
 def vkv_pa_start():
     return redirect(url_for('vkv_pa.vkv_pa_upload'))
+
 
 @vkv_pa.route('/upload', methods=['GET', 'POST'])
 def vkv_pa_upload():
@@ -31,6 +33,7 @@ def vkv_pa_upload():
         id = act1.store()
 
         return redirect(url_for('vkv_pa.vkv_pa_uploaded_adif',id=id))
+
 
 @vkv_pa.route('/log/<id>')
 def vkv_pa_uploaded_adif(id):
@@ -57,5 +60,3 @@ def vkv_pa_uploaded_adif(id):
         me={'map_center': log.meta['latlng'], 'gridsquare': log.meta['gridsquare']},
         scores=log.meta['scores'],
     )
-
-

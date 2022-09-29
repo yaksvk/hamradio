@@ -3,7 +3,7 @@
 import unittest
 from app import app
 
-class TestApp(unittest.TestCase):
+class TestSSB(unittest.TestCase):
 
     def setUp(self):
         app.testing = True

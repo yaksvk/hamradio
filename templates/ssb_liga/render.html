@@ -1,0 +1,30 @@
+{% extends "master.html" %}
+{% block body %}
+
+<h2>Spojenia</h2>
+
+<table id="qsos" class="table table-bordered">
+<thead>
+<tr>
+    <th></th>
+    <th>Čas</th>
+    <th>Značka</th>
+    <th>TX</th>
+    <th>RX</th>
+    <th>Okres</th>
+</tr>
+</thead>
+<tbody>
+{% for qso in log.qsos %}
+<tr{% if qso.top_distance %} class="top"{% endif %}>
+    <td>{{ loop.index }}</td>
+    <td>{{ qso.qso_date|date_filter }} {{ qso.time_on|time_filter }}</td>
+    <td><a target="_blank" href="https://www.qrz.com/db/{{ qso.call }}">{{ qso.call }}</a></td>
+    <td>{{ qso.rst_sent }}</td>
+    <td>{{ qso.rst_rcvd }}</td>
+    <td>{{ qso.srx_string }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
