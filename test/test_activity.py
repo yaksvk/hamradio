@@ -9,7 +9,7 @@ from lib.vkv_pa.vhfacthamactivity import VhfActHamActivity
 class TestActivity(unittest.TestCase):
 
     def setUp(self):
-        self.adif1 = 'test/examples/adif1.adif'
+        self.adif1 = 'test/fixtures/adif1.adif'
 
     def test_adif_import(self):
         self.assertTrue(os.path.isfile(self.adif1), "Check if %s exists." % self.adif1)
