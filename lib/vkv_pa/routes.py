@@ -9,11 +9,11 @@ from .vhfacthamactivity import VhfActHamActivity
 
 vkv_pa = Blueprint('vkv_pa', __name__)
 
-@vkv_pa.route('/vkv-prevadzkovy-aktiv')
+@vkv_pa.route('/')
 def vkv_pa_start():
     return redirect(url_for('vkv_pa.vkv_pa_upload'))
 
-@vkv_pa.route('/vkv-prevadzkovy-aktiv/upload', methods=['GET', 'POST'])
+@vkv_pa.route('/upload', methods=['GET', 'POST'])
 def vkv_pa_upload():
     if request.method == 'GET':
         return render_template('vkv_pa/start.html')
@@ -32,7 +32,7 @@ def vkv_pa_upload():
 
         return redirect(url_for('vkv_pa.vkv_pa_uploaded_adif',id=id))
 
-@vkv_pa.route('/vkv-prevadzkovy-aktiv/log/<id>')
+@vkv_pa.route('/log/<id>')
 def vkv_pa_uploaded_adif(id):
 
     # gridsquare will be guessed from ADIF, if possible, but can be overridden

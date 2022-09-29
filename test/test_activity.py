@@ -4,7 +4,6 @@ import unittest
 import os
 
 from lib.common.hamactivity import HamActivity
-from lib.vkv_pa.vhfacthamactivity import VhfActHamActivity
 
 class TestActivity(unittest.TestCase):
 
@@ -17,29 +16,16 @@ class TestActivity(unittest.TestCase):
         self.assertIsInstance(act1, HamActivity, 'Initiate a new HamActivity from an ADIF file')
 
     def test_saving(self):
-        act1 = VhfActHamActivity(adif_file=self.adif1)
-        act1.meta['gridsquare'] = 'JN88nc'
+        act1 = HamActivity(adif_file=self.adif1)
 
         act1_id = act1.store()
         self.assertIsInstance(act1_id, str, 'Application stored as a hash')
-        act2 = VhfActHamActivity(id=act1_id)
+        act2 = HamActivity(id=act1_id)
 
 
-        self.assertIsInstance(act2, VhfActHamActivity, 'Retrieve a HamActivity from storage')
+        self.assertIsInstance(act2, HamActivity, 'Retrieve a HamActivity from storage')
         self.assertDictEqual(act1.meta, act2.meta)
         self.assertEqual(len(act1.qsos), len(act2.qsos))
 
         for (q1, q2) in zip(act1.qsos, act2.qsos):
             self.assertDictEqual(vars(q1), vars(q2), 'comparing individual QSOs')
-
-    def test_scores(self):
-        act1 = VhfActHamActivity(adif_file=self.adif1)
-        act1.meta['gridsquare'] = 'JN88nc'
-        act1.calculate_scores()
-        self.assertEqual(act1.meta['scores']['multiplier_count'], 5)
-        self.assertEqual(act1.meta['scores']['score'], 17)
-        self.assertEqual(act1.meta['scores']['score_multiplied'], 85)
-
-
-
-

@@ -1,0 +1,16 @@
+{% extends "master.html" %}
+{% block body %}
+<h2>Nahrať denník</h2>
+
+<p>Prosím vyplň <strong>3-miestny</strong> kód okresu, z ktorého si vysielal a nahraj denník vo fomáte ADIF.</p>
+<p>Výstupom bude súbor vo formáte Cabrillo.</p>
+
+<div id="upload_form">
+<form method=post enctype=multipart/form-data>
+  <p>
+     <label for="district_code">Lokátor:</label><input type="text" name="district_code"><br>
+    <input type=file name=file><br>
+     <input type="submit" value="Odoslať">
+</form>
+</div>
+{% endblock %}

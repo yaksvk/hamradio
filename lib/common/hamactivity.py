@@ -17,6 +17,8 @@ class Qso:
         self.rst_sent = None
         self.stx = None
         self.srx = None
+        self.srx_string = None
+        self.stx_string = None
         self.latlng = None
 
         if qso_dict is not None:
