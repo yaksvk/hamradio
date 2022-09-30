@@ -1,0 +1,11 @@
+{%- set f1 = "%-"~ formats.len1 ~"s" %}
+{%- set f2 = "%-"~ formats.len2 ~"s" %}
+START-OF-LOG: 3.0
+CATEGORY-POWER: {{ log.meta.category|upper }}
+EMAIL: {{ log.meta.email|upper }}
+SOAPBPOX:
+{%- for qso in log.qsos %}
+QSO: 3500 PH {{ qso.qso_date }} {{ qso.time_on|replace(":","") }} {{ f1|format(log.meta.my_call) }} {{ qso.rst_sent }} {{ log.meta.district_code }} {{ f2|format(qso.call) }} {{ qso.rst_rcvd }} {{ qso.srx_string }}          
+{%- endfor %}
+END-OF-LOG: 
+

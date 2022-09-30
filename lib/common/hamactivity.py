@@ -71,6 +71,7 @@ class Qso:
 class HamActivity:
 
     def __init__(self, adif_file=None, id=None):
+        self.id = None
         self.meta = {}
         self.qsos = []
         self.storage = TmpStorage()
@@ -95,14 +96,17 @@ class HamActivity:
     def init_from_storage(self, id) -> None:
         data = self.storage.load(id)
 
+        self.id = id
         self.meta = data['meta']
         self.qsos = [ Qso(qso_dict=item) for item in data['qsos'] ]
 
 
     def store(self) -> str:
-        return self.storage.save(
-            self.__dict__()
+        self.id = self.storage.save(
+            self.__dict__(),
+            self.id
         )
+        return self.id
 
     def __dict__(self):
         return { 'meta': self.meta, 'qsos': [ vars(qso) for qso in self.qsos ] }

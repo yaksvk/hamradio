@@ -20,14 +20,26 @@ class TmpStorage:
         self.prefix = prefix if prefix else PREFIX
 
 
-    def save(self, input_data) -> str:
-        file = tempfile.NamedTemporaryFile(
-            delete=False,
-            prefix=self.prefix,
-            dir=self.dir
-        )
+    def save(self, input_data, id=None) -> str:
+
+        file = None;
+        if id is not None:
+            file = open(os.path.join(
+                self.dir,
+                f'{self.prefix}{id}',
+            ), "wb")
+        else:
+            file = tempfile.NamedTemporaryFile(
+                delete=False,
+                prefix=self.prefix,
+                dir=self.dir
+            )
 
         pickle.dump(input_data, file)
+
+        if file is not None:
+            file.close()
+
         return re.sub(
             rf'^{self.prefix}',
             '',

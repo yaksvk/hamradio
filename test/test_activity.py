@@ -29,3 +29,12 @@ class TestActivity(unittest.TestCase):
 
         for (q1, q2) in zip(act1.qsos, act2.qsos):
             self.assertDictEqual(vars(q1), vars(q2), 'comparing individual QSOs')
+
+        self.assertIsInstance(act2.id, str)
+
+        id = act2.id
+        id_new = act2.store()
+
+        self.assertEqual(id, act2.id, "ID stays the same after storing")
+        self.assertEqual(id_new, id, "Store of an existing activity with an ID returns the same ID")
+

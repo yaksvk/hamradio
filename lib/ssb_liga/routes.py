@@ -2,7 +2,8 @@
 
 import os
 
-from flask import Flask, request, redirect, url_for, render_template, jsonify, make_response, Blueprint, current_app
+from flask import Flask, request, redirect, url_for, render_template, jsonify, make_response, Blueprint,\
+    current_app, Response
 from werkzeug.utils import secure_filename
 from .ssbliga import SsbLiga
 
@@ -30,6 +31,9 @@ def upload():
         # process file to activity
         act1 = SsbLiga(adif_file=upload_location)
         act1.meta['district_code'] = request.values.get('district_code', None)
+        act1.meta['my_call'] = request.values.get('my_call', None)
+
+        act1.pre_process()
         id = act1.store()
 
         return redirect(url_for('ssb_liga.uploaded_adif',id=id))
@@ -38,11 +42,27 @@ def upload():
 @ssb_liga.route('/log/<id>')
 def uploaded_adif(id):
 
-    log = SsbLiga()
-    log.init_from_storage(id)
-    log.pre_process()
+    log = SsbLiga(id=id)
 
     return render_template(
         'ssb_liga/render.html',
         log=log,
     )
+
+@ssb_liga.route('/log/<id>/export/cabrillo')
+def export_cabrillo(id):
+    log = SsbLiga(id=id)
+
+    # max callsign column width
+    len1 = len(log.meta['my_call'])
+    len2 = max([len(qso.call) for qso in log.qsos])
+
+    output = render_template(
+        'ssb_liga/export.cabrillo',
+        log=log,
+        formats={
+            'len1': len1,
+            'len2': len2
+        },
+    )
+    return Response(output, mimetype='text/plain')
