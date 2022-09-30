@@ -30,8 +30,9 @@ def upload():
 
         # process file to activity
         act1 = SsbLiga(adif_file=upload_location)
-        act1.meta['district_code'] = request.values.get('district_code', None)
-        act1.meta['my_call'] = request.values.get('my_call', None)
+
+        for attr in ('district_code', 'my_call', 'category', 'email'):
+            act1.meta[attr] = request.values.get(attr, None)
 
         act1.pre_process()
         id = act1.store()
