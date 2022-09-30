@@ -1,0 +1,17 @@
+{% extends "master.html" %}
+{% block body %}
+<h2>Nahrať denník</h2>
+
+<p>Prosím nahraj denník vo fomáte ADIF.</p>
+<p>Výstupom bude súbor vo formáte Cabrillo.</p>
+
+<div id="upload_form">
+<form method=post enctype=multipart/form-data>
+  <table>
+    <tr><th><label for="my_call">Vlastná značka:</label></th><td><input type="text" name="my_call" oninput="this.value = this.value.toUpperCase()"></td></tr>
+    <tr><th><label for="file">Nahrať ADIF:</label></th><td><input type="file" name="file"></td></tr>
+  </table>
+  <p><input type="submit" value="Odoslať"></p>
+</form>
+</div>
+{% endblock %}

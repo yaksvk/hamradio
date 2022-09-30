@@ -12,15 +12,15 @@ class SsbLiga(HamActivity):
         for qso in self.qsos:
             if qso.srx_string:
                 qso.srx_string = qso.srx_string.upper()
-                next
+                continue
 
             if re.match('^[A-Za-z]{3}$', str(getattr(qso, 'srx', ''))):
                 qso.srx_string = qso.srx.upper()
-                next
+                continue
 
             if re.match('^[A-Za-z]{3}$', getattr(qso, 'qth', '')):
                 qso.srx_string = qso.qth.upper()
-                next
+                continue
 
             match = re.findall('^([A-Za-z]{3})\s?', getattr(qso, 'comment',''))
             if match:
