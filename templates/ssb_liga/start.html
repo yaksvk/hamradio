@@ -9,8 +9,8 @@
 <div id="upload_form">
 <form method=post enctype=multipart/form-data>
   <table>
-    <tr><th><label for="district_code">Okresný znak:</label></th><td><input type="text" name="district_code"></td></tr>
-    <tr><th><label for="my_call">Vlastná značka:</label></th><td><input type="text" name="my_call" oninput="this.value = this.value.toUpperCase()"></td></tr>
+    <tr><th><label for="district_code">Okresný znak:</label></th><td><input type="text" class="text-uppercase" name="district_code"></td></tr>
+    <tr><th><label for="my_call">Vlastná značka:</label></th><td><input type="text" name="my_call" class="text-uppercase"></td></tr>
     <tr><th><label for="category">Kategória (výkon):</label></th>
       <td>
         <select name="category"><option value="QRO">QRO</option><option value="QRP">QRP</option></select>

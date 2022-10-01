@@ -4,6 +4,6 @@
 {%- set fr2 = "%-"~ formats.len_r2 ~"s" %}
 START-OF-LOG: 3.0
 {%- for qso in log.qsos %}
-QSO: 3500 {{ qso.mode|mode_filter }} {{ qso.qso_date }} {{ qso.time_on|replace(":","") }} {{ f1|format(log.meta.my_call) }} {{ "%-3s"|format(qso.rst_sent) }} {{ fr1|format(qso.stx) }} {{ f2|format(qso.call) }} {{ "%-3s"|format(qso.rst_rcvd) }} {{ fr2|format(qso.srx) }}          
+QSO: 3500 {{ qso.mode|mode_filter }} {{ qso.qso_date|date_filter }} {{ qso.time_on|replace(":","") }} {{ f1|format(log.meta.my_call) }} {{ "%-3s"|format(qso.rst_sent) }} {{ fr1|format(qso.stx) }} {{ f2|format(qso.call) }} {{ "%-3s"|format(qso.rst_rcvd) }} {{ fr2|format(qso.srx) }}          
 {%- endfor %}
 END-OF-LOG: 
