@@ -68,7 +68,16 @@ def export_cabrillo(id):
             'len_r2': len4,
         },
     )
-    return Response(output, mimetype='text/plain')
+
+    my_call = log.meta['my_call'].upper()
+
+    return Response(
+        output,
+        mimetype='text/plain',
+        headers={
+            'Content-Disposition': f'attachment; filename="om_activity_{my_call}.cab"',
+        }
+    )
 
 @om_activity.app_template_filter('mode_filter')
 def _jinja2_filter_date(mode):

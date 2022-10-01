@@ -66,4 +66,13 @@ def export_cabrillo(id):
             'len2': len2
         },
     )
-    return Response(output, mimetype='text/plain')
+
+    my_call = log.meta['my_call'].upper()
+
+    return Response(
+        output,
+        mimetype='text/plain',
+        headers={
+            'Content-Disposition': f'attachment; filename="ssb_liga_{my_call}.cab"',
+        }
+    )
