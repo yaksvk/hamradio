@@ -5,7 +5,7 @@ CATEGORY-POWER: {{ log.meta.category|upper }}
 EMAIL: {{ log.meta.email|upper }}
 SOAPBPOX:
 {%- for qso in log.qsos %}
-QSO: 3500 PH {{ qso.qso_date|date_filter }} {{ qso.time_on|replace(":","") }} {{ f1|format(log.meta.my_call) }} {{ qso.rst_sent }} {{ log.meta.district_code }} {{ f2|format(qso.call) }} {{ qso.rst_rcvd }} {{ qso.srx_string }}          
+QSO: 3500 PH {{ qso.qso_date|date_filter }} {{ qso.time_on|replace(":","") }} {{ f1|format(log.meta.my_call)|upper }} {{ qso.rst_sent }} {{ log.meta.district_code|upper }} {{ f2|format(qso.call) }} {{ qso.rst_rcvd }} {{ qso.srx_string }}          
 {%- endfor %}
 END-OF-LOG: 
 

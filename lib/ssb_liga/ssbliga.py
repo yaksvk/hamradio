@@ -25,8 +25,3 @@ class SsbLiga(HamActivity):
             match = re.findall('^([A-Za-z]{3})\s?', getattr(qso, 'comment',''))
             if match:
                 qso.srx_string = match[0].upper()
-
-
-
-
-
