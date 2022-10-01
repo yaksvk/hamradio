@@ -7,7 +7,7 @@ from flask import Flask, request, redirect, url_for, render_template, jsonify, m
 from werkzeug.utils import secure_filename
 from .omactivity import OmActivity
 
-om_activity = Blueprint('om_activity', __name__)
+om_activity = Blueprint('om_activity', __name__, template_folder='templates')
 
 @om_activity.route('/')
 def start():

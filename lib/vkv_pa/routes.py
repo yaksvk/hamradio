@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 
 from .vhfacthamactivity import VhfActHamActivity
 
-vkv_pa = Blueprint('vkv_pa', __name__)
+vkv_pa = Blueprint('vkv_pa', __name__, template_folder='templates')
 
 
 @vkv_pa.route('/')

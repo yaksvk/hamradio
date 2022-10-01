@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 from .ssbliga import SsbLiga
 
 
-ssb_liga = Blueprint('ssb_liga', __name__)
+ssb_liga = Blueprint('ssb_liga', __name__, template_folder='templates')
 
 
 @ssb_liga.route('/')
