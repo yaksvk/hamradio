@@ -1,8 +1,10 @@
-{%- set f1 = "%-"~ formats.len1 ~"s" %}
-{%- set f2 = "%-"~ formats.len2 ~"s" %}
-{%- set fr1 = "%-"~ formats.len_r1 ~"s" %}
-{%- set fr2 = "%-"~ formats.len_r2 ~"s" %}
+{%- set f1 = "%-"~ formats.len1 ~"s" -%}
+{%- set f2 = "%-"~ formats.len2 ~"s" -%}
+{%- set fr1 = "%-"~ formats.len_r1 ~"s" -%}
+{%- set fr2 = "%-"~ formats.len_r2 ~"s" -%}
 START-OF-LOG: 3.0
+CALLSIGN: {{ log.meta.my_call }}
+CONTEST: OM-ACTIVITY
 {%- for qso in log.qsos %}
 QSO: 3500 {{ qso.mode|mode_filter }} {{ qso.qso_date|date_filter }} {{ qso.time_on|replace(":","") }} {{ f1|format(log.meta.my_call) }} {{ "%-3s"|format(qso.rst_sent) }} {{ fr1|format(qso.stx) }} {{ f2|format(qso.call) }} {{ "%-3s"|format(qso.rst_rcvd) }} {{ fr2|format(qso.srx) }}          
 {%- endfor %}
