@@ -63,6 +63,10 @@ class Adif(LogfileProcessor):
             if 'CALL' in adif_vars:
                 self.qsos.append({'adif_vars': adif_vars})
 
+            # throw away anything less than seconds from time
+            if 'TIME_ON' in adif_vars:
+                adif_vars['TIME_ON'] = adif_vars['TIME_ON'][:4]
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
