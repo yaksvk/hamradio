@@ -6,8 +6,8 @@ Module that contains functions dealing with Maidenhead grid squares
 import math
 import re
 
-from typing import Union
-LatLngTuple = tuple[float, float]
+from typing import Union, Tuple
+LatLngTuple = Tuple[float, float]
 
 l1 = 'abcdefghijklmnopqr'
 l2 = '0123456789'
@@ -16,7 +16,7 @@ gridsquare_reg = '^[A-R]{2}\d{2}([a-x]{2})?$'
 gridsquare_subreg = '([A-R]{2}\d{2}[a-x]{2})'
 R = 6371e3 # earth radius
 
-def _norm_gridsquare(gridsquare: str) -> tuple[int, ...]:
+def _norm_gridsquare(gridsquare: str) -> Tuple[int, ...]:
     # convert gridsquare to a tuple of numbers; letters lowercased and turned
     # to their ordinal values, integers are kept as they are.
     return tuple(int(x) if x.isdigit() else ord(x) - 97 for x in gridsquare.lower())
@@ -69,7 +69,7 @@ def gridsquare2latlng(gridsquare: str) -> LatLngTuple:
 
     return (center_lat, center_lng)
 
-def gridsquare2latlngedges(gridsquare: str) -> tuple[LatLngTuple, LatLngTuple]:
+def gridsquare2latlngedges(gridsquare: str) -> Tuple[LatLngTuple, LatLngTuple]:
     # Convert gridsquares to lat and long and returns top/left, bottom/right 
     # ((lat,lng),(lat,lng))
     # Works for any gridsquares, from 2letter ones to theoretically infinite 
