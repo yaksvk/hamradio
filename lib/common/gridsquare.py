@@ -6,6 +6,9 @@ Module that contains functions dealing with Maidenhead grid squares
 import math
 import re
 
+from typing import Union
+LatLngTuple = tuple[float, float]
+
 l1 = 'abcdefghijklmnopqr'
 l2 = '0123456789'
 l3 = 'abcdefghijklmnopqrstuvx'
@@ -13,28 +16,25 @@ gridsquare_reg = '^[A-R]{2}\d{2}([a-x]{2})?$'
 gridsquare_subreg = '([A-R]{2}\d{2}[a-x]{2})'
 R = 6371e3 # earth radius
 
-def _norm_gridsquare(gridsquare):
+def _norm_gridsquare(gridsquare: str) -> tuple[int, ...]:
     # convert gridsquare to a tuple of numbers; letters lowercased and turned
     # to their ordinal values, integers are kept as they are.
     return tuple(int(x) if x.isdigit() else ord(x) - 97 for x in gridsquare.lower())
 
-def is_gridsquare(text):
+def is_gridsquare(text: str) -> bool:
     if isinstance(text, str):
         if re.match(gridsquare_reg, text, re.IGNORECASE):
             return True
     return False
 
-def extract_gridsquare(text):
+def extract_gridsquare(text: str) -> Union[str, None]:
     # find a gridsquare as a substring of a string
     match = re.search(gridsquare_subreg, text, re.DOTALL | re.IGNORECASE)
     if match:
         return match.groups()[0]
     return None
 
-def small_square_distance2(sq1, sq2):
-    pass
-
-def small_square_distance(sq1, sq2):
+def small_square_distance(sq1: str, sq2: str) -> int:
     # calculate small grid square distance for contest (small square = JN88)
     sq1 = sq1.lower()
     sq2 = sq2.lower()
@@ -61,7 +61,7 @@ def small_square_distance(sq1, sq2):
 
     return max(dist_x, dist_y)
 
-def gridsquare2latlng(gridsquare):
+def gridsquare2latlng(gridsquare: str) -> LatLngTuple:
     # get gridsquare center latlng (returns one (lat,lng))
     ((from_lat, from_lng),(to_lat, to_lng)) = gridsquare2latlngedges(gridsquare)
     center_lng = from_lng + (to_lng - from_lng)/2
@@ -69,7 +69,7 @@ def gridsquare2latlng(gridsquare):
 
     return (center_lat, center_lng)
 
-def gridsquare2latlngedges(gridsquare):
+def gridsquare2latlngedges(gridsquare: str) -> tuple[LatLngTuple, LatLngTuple]:
     # Convert gridsquares to lat and long and returns top/left, bottom/right 
     # ((lat,lng),(lat,lng))
     # Works for any gridsquares, from 2letter ones to theoretically infinite 
@@ -80,9 +80,9 @@ def gridsquare2latlngedges(gridsquare):
     items = _norm_gridsquare(gridsquare)
 
     # initial steps
-    (step_lng, step_lat) = (20, 10)
-    (from_lng, to_lng) = (-180,-180)
-    (from_lat, to_lat) = (-90,-90)
+    (step_lng, step_lat) = (20.0, 10.0)
+    (from_lng, to_lng) = (-180.0,-180.0)
+    (from_lat, to_lat) = (-90.0,-90.0)
 
     # step through the gridsquare one rectangle (2 items) at a time
     for i in range(0,len(items),2):
@@ -99,16 +99,16 @@ def gridsquare2latlngedges(gridsquare):
     # return the rectangle dimensions using the last step
     return ((from_lat, from_lng), (from_lat+step_lat, from_lng+step_lng))
 
-def dist_haversine(param1, param2):
+def dist_haversine(param1: Union[str, LatLngTuple], param2: Union[str, LatLngTuple]) -> float:
     # Standard implementation of haversine algorithm, guess operands 
     # so that we can work with both gridsquares and latlng tuples.
 
-    if type(param1) is tuple:
+    if isinstance(param1, tuple):
         (lat1, lng1) = param1
     else:
         (lat1, lng1) = gridsquare2latlng(param1)
 
-    if type(param2) is tuple:
+    if isinstance(param2, tuple):
         (lat2, lng2) = param2
     else:
         (lat2, lng2) = gridsquare2latlng(param2)
@@ -126,7 +126,7 @@ def dist_haversine(param1, param2):
 
     return distance
 
-def dist_ham(*args):
+def dist_ham(*args) -> int:
     # just use haversine with some "bulgarian" constants
 
     distance = dist_haversine(*args)
