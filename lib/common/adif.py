@@ -6,14 +6,14 @@ from .logfile_processor import LogfileProcessor
 
 class Adif(LogfileProcessor):
     @staticmethod
-    def can_process(text):
+    def can_process(text: str) -> bool:
         # returns true if this can parse a text, false if not, should return true for ADIF file contents
         variables = re.findall('<(\w+):(\d+)>([^<]+)', text)
         eors = re.findall('(<eor>)', text, flags=re.IGNORECASE)
         return len(variables) > 0 and len(eors) > 0
 
     @staticmethod
-    def process_adif_variables(text):
+    def process_adif_variables(text: str) -> dict:
         # ADIF = <variable_name:length>value\s - and substring the value according to
         # length. This should probably be read sequentially, not as a regexp. (value with < will probably suck)
         variables = re.findall('<(\w+):(\d+)(:\w)?>([^<]+)', text)
@@ -21,12 +21,12 @@ class Adif(LogfileProcessor):
         return adif_vars
 
     @staticmethod
-    def process_header_comments(text):
+    def process_header_comments(text: str) -> dict:
         variables = re.findall('((\w+)=(\w+))\n', text)
         comments = dict((var[1].upper(), var[2]) for var in variables)
         return comments
 
-    def init_from_string(self, adif_string):
+    def init_from_string(self, adif_string: str) -> None:
         # process header 
         res = re.findall("^(.*?)<EOH>", adif_string, flags=re.MULTILINE | re.DOTALL | re.IGNORECASE)
         if res:
