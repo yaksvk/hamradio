@@ -2,6 +2,8 @@
 
 import re
 
+from typing import Optional
+
 from .tmpstorage import TmpStorage
 from .adif import Adif
 from .gridsquare import gridsquare2latlng, small_square_distance, is_gridsquare,\
@@ -36,7 +38,7 @@ class Qso:
             if hasattr(self, 'gridsquare') and self.gridsquare:
                 self.latlng = gridsquare2latlng(self.gridsquare)
 
-    def _probe_gridsquare(self, adif_vars):
+    def _probe_gridsquare(self, adif_vars: dict) -> Optional[str]:
             gridsquare = self.gridsquare
             # try to extract gridsquare from the qso
             srx_grid = extract_gridsquare(adif_vars.get('SRX_STRING', ''))
@@ -45,19 +47,20 @@ class Qso:
 
             # if we still don't have the gridsquare, try to guess it from qth
             if  not gridsquare and hasattr(self, 'qth'):
-                if is_gridsquare(self.qth):
-                    gridsquare = self.qth
+                qth = getattr(self, 'qth')
+                if is_gridsquare(qth):
+                    gridsquare = qth
 
                 # if we still have nothing, try to extract gridsquare from QTH
                 else:
-                    guess = extract_gridsquare(self.qth)
+                    guess = extract_gridsquare(qth)
                     if guess is not None:
                         gridsquare = guess
 
             if not gridsquare and hasattr(self, 'comment'):
                 # fall back to guessing gridsquare from comment
-                if self.comment:
-                    guess = extract_gridsquare(self.comment)
+                if hasattr(self, 'comment'):
+                    guess = extract_gridsquare(getattr(self, 'comment'))
                     if guess is not None:
                         gridsquare = guess
 
@@ -81,7 +84,7 @@ class HamActivity:
         elif id is not None:
             self.init_from_storage(id)
 
-    def init_from_adif(self, adif_file):
+    def init_from_adif(self, adif_file: str) -> None:
 
         adif = Adif(from_file=adif_file)
         for item in adif.qsos:
@@ -89,11 +92,11 @@ class HamActivity:
             self.qsos.append(qso)
 
 
-    def init_from_gui(self):
+    def init_from_gui(self) -> None:
         ...
 
 
-    def init_from_storage(self, id) -> None:
+    def init_from_storage(self, id: str) -> None:
         data = self.storage.load(id)
 
         self.id = id
