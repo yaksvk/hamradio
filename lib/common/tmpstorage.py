@@ -10,8 +10,11 @@ import pickle
 import re
 import tempfile
 
+from typing import Optional
+
 DIR='/tmp'
 PREFIX='log_'
+
 
 class TmpStorage:
 
@@ -20,7 +23,7 @@ class TmpStorage:
         self.prefix = prefix if prefix else PREFIX
 
 
-    def save(self, input_data, id=None) -> str:
+    def save(self, input_data, id=None) -> Optional[str]:
 
         file = None;
         if id is not None:
@@ -37,8 +40,10 @@ class TmpStorage:
 
         pickle.dump(input_data, file)
 
-        if file is not None:
-            file.close()
+        if file is None:
+            return None
+
+        file.close()
 
         return re.sub(
             rf'^{self.prefix}',
@@ -47,10 +52,11 @@ class TmpStorage:
         )
 
 
-    def load(self, id) -> dict:
+    def load(self, id: str) -> Optional[dict]:
         if re.match('^\w+$', id):
             with (open(os.path.join(
                 self.dir,
                 f'{self.prefix}{id}'
             ),"rb")) as picklefile:
                 return pickle.load(picklefile)
+        return None
