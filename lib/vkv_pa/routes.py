@@ -60,3 +60,14 @@ def vkv_pa_uploaded_adif(id):
         me={'map_center': log.meta['latlng'], 'gridsquare': log.meta['gridsquare']},
         scores=log.meta['scores'],
     )
+
+# vkv_pa custom error handler
+if not os.getenv('DEVELOPMENT', default=False):
+    @vkv_pa.errorhandler(Exception)
+    def error_handler(error):
+        return render_template(
+            'vkv_pa/error.html',
+            error=error
+        )
+
+    vkv_pa.register_error_handler(Exception, error_handler)

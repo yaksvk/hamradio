@@ -16,13 +16,11 @@ load_dotenv()
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = os.getenv('TMP', default='/tmp')
 
-
 @app.route('/')
 def start():
     return render_template(
         'index.html',
     )
-
 
 app.register_blueprint(vkv_pa, url_prefix="/vkv-prevadzkovy-aktiv")
 app.register_blueprint(ssb_liga, url_prefix="/ssb-liga")
@@ -37,6 +35,16 @@ def _jinja2_filter_time(time):
 @app.template_filter('date_filter')
 def _jinja2_filter_date(date):
     return '-'.join((date[0:4],date[4:6],date[6:8]))
+
+if not os.getenv('DEVELOPMENT', default=False):
+    # generic error handlers
+    @app.errorhandler(Exception)
+    def default_error_handler(error):
+        return render_template(
+            'error.html',
+            error=error
+        )
+    app.register_error_handler(Exception, default_error_handler)
 
 if __name__ == '__main__':
     app.run(debug=True, port=os.getenv("PORT", default=5000))
