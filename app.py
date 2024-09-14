@@ -9,6 +9,7 @@ from flask import Flask, request, redirect, url_for, render_template, jsonify, m
 from lib.vkv_pa.routes import vkv_pa
 from lib.ssb_liga.routes import ssb_liga
 from lib.om_activity.routes import om_activity
+from lib.s2s.routes import s2s
 
 # for local development, import ENV variables from .env file
 load_dotenv()
@@ -25,6 +26,7 @@ def start():
 app.register_blueprint(vkv_pa, url_prefix="/vkv-prevadzkovy-aktiv")
 app.register_blueprint(ssb_liga, url_prefix="/ssb-liga")
 app.register_blueprint(om_activity, url_prefix="/om-activity")
+app.register_blueprint(s2s, url_prefix="/s2s")
 
 
 # formatters

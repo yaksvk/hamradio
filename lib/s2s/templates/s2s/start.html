@@ -1,0 +1,15 @@
+{% extends "master.html" %}
+{% block body %}
+<h2>Nahrať denník</h2>
+
+<p>Prosím nahraj denník vo fomáte CSV</p>
+
+<div id="upload_form">
+<form method=post enctype=multipart/form-data>
+  <table>
+    <tr><th><label for="file">Nahrať CSV:</label></th><td><input type="file" name="file"></td></tr>
+  </table>
+  <p><input type="submit" class="btn btn-lg btn-success" value="Spracovať"></p>
+</form>
+</div>
+{% endblock %}

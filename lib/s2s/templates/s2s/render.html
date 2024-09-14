@@ -1,0 +1,121 @@
+{% extends "master.html" %}
+{% block body %}
+<h2>S2S</h2>
+<h2>Spojenia</h2>
+
+<div id='map'></div>
+<table id="qsos" class="table table-bordered">
+
+<!--
+<thead>
+<tr>
+    <th></th>
+    <th>Čas</th>
+    <th>Značka</th>
+    <th>TX</th>
+    <th>TX NUM</th>
+    <th>RX</th>
+    <th>RX NUM</th>
+</tr>
+</thead>
+-->
+<tbody>
+{% for qso in log.qsos %}
+<tr{% if qso.top_distance %} class="top"{% endif %}>
+    <td>{{ loop.index }}</td>
+    <td>{{ qso.at_0 }} {{ qso.at_1 }}</td>
+    <td>{{ qso.at_4 }}</td>
+    <td>{{ qso.at_5 }}</td>
+    <td>{{ qso.at_6 }}</td>
+    <td>{{ qso.at_2 }}</td>
+    <td>{{ qso.at_3 }}</td>
+    <td><a target="_blank" href="https://www.qrz.com/db/{{ qso.at_9 }}">{{ qso.at_9 }}</a></td>
+    <td>{{ qso.at_10 }}</td>
+    <td>{{ qso.at_11 }}</td>
+    <td>{{ qso.at_14 }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    let activity = {{ log.__dict__()|tojson }};
+    let qsos = activity['qsos'];
+
+    var map = L.map('map').setView([48.16, 17.09], 6); // zoom=6
+
+    /* fullscreen plugin */
+   	// create fullscreen control
+	var fsControl = new L.Control.FullScreen();
+	// add fullscreen control to the map
+	map.addControl(fsControl);
+
+	// detect fullscreen toggling
+	map.on('enterFullscreen', function(){
+		if(window.console) window.console.log('enterFullscreen');
+	});
+	map.on('exitFullscreen', function(){
+		if(window.console) window.console.log('exitFullscreen');
+	});
+
+    /* end fullscreen plugin */
+
+    var myIcon = L.divIcon({
+        className: 'marker', 
+        html: '<div class="triangle-container"><svg height="20" width="20"><circle cx="5" cy="5" r="5" stoke-width="1" stroke="black" /></svg></div>'
+    });
+    var myIconTop = L.divIcon({
+        className: 'marker_top', 
+        html: '<div class="triangle-container"><svg height="20" width="20"><circle cx="5" cy="5" r="5" stoke-width="1" stroke="black" fill="#ff5800" /></svg></div>'
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    for (var qso in qsos) {
+        (function(qso){
+
+            if (qsos[qso]['at_7'] != 'None' && 
+                qsos[qso]['at_8'] != 'None' &&
+                qsos[qso]['at_12'] != 'None' &&
+                qsos[qso]['at_13'] != 'None'
+            ) {
+                var icon = myIcon;
+                if (qsos[qso]['top']) { icon = myIconTop;}
+                
+                var polyline = L.polyline(
+                    [
+                        [qsos[qso]['at_7'],qsos[qso]['at_8']],
+                        [qsos[qso]['at_12'],qsos[qso]['at_13']],
+
+                    ],
+                    {
+                        color: '#000',
+                        weight: 1,
+                        opacity: .5,
+                        lineJoin: 'round'
+                    }
+                ).addTo(map);
+
+                
+                var marker = L.marker([qsos[qso]['at_12'],qsos[qso]['at_13']], {icon: icon}).addTo(map);
+                marker.on('mouseover', function(e) {
+                    var popup = L.popup()
+                        .setLatLng(e.latlng) 
+                        .setContent('<a target="_blank" href="https://www.qrz.com/db/' + qsos[qso]['at_9'] + '"><b>' + 
+                            qsos[qso]['at_9'] + '</b></a><br>'+ qsos[qso]['at_13'] + '<br>' + qsos[qso]['at_12']+ '<br><b>' + qsos[qso]['at_14']+' km</b>')
+                        .openOn(map);
+                });
+                
+            }
+        })(qso);
+    }
+
+});
+</script>
+
+</pre>
+
+{% endblock %}
