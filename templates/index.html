@@ -26,14 +26,16 @@
         <div class="col-md-4">
           <div class="panel panel-info">
             <div class="panel-heading">
-              <h3 class="panel-title">SOTA</h3>
+              <h3 class="panel-title">R1 VKV Contest</h3>
             </div>
             <div class="panel-body">
-              <p>Vysielanie z kopcov. Vyhodnocovateľovi sa na stránke SOTAData nahráva ADIF alebo CSV.</p>
-              <p class="p-start"><button type="button" class="btn btn-lg btn-default" disabled="disabled">Pripravuje sa</button></p>
+              <p>Medzinárodný závod na VKV a vyšších pásmach v Regióne 1. Výstupom je EDI súbor</p>
+              <p class="p-start">
+                <a class="btn btn-lg btn-success" role="button" href="{{ url_for('vkv_edi.vkv_edi_start') }}">Štart</a>
+              </p>
             </div>
           </div>
-        </div>
+        </div>       
         <div class="col-md-4">
           <div class="panel panel-info">
             <div class="panel-heading">
