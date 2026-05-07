@@ -126,11 +126,27 @@ def dist_haversine(param1: Union[str, LatLngTuple], param2: Union[str, LatLngTup
 
     return distance
 
-def dist_ham(*args) -> int:
-    # just use haversine with some "bulgarian" constants
+def dist_ham(param1: Union[str, LatLngTuple], param2: Union[str, LatLngTuple]) -> float:
+    if isinstance(param1, tuple):
+        (lat1, lng1) = param1
+    else:
+        (lat1, lng1) = gridsquare2latlng(param1)
 
-    distance = dist_haversine(*args)
-    return int(distance) + 1
+    if isinstance(param2, tuple):
+        (lat2, lng2) = param2
+    else:
+        (lat2, lng2) = gridsquare2latlng(param2)
+
+    dlon = lng2 - lng1
+    dlat = lat2 - lat1
+    a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
+    c = 2 * math.asin(math.sqrt(a))
+
+    angle_deg = math.degrees(c)
+
+    # Apply contest rule with constant
+    distance_km = int(angle_deg * 111.2) + 1
+    return distance_km
 
 if __name__ == '__main__':
     print(gridsquare2latlng('JN88oj'))
