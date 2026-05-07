@@ -53,7 +53,7 @@ class TmpStorage:
 
 
     def load(self, id: str) -> Optional[dict]:
-        if re.match('^\w+$', id):
+        if re.match(r'^\w+$', id):
             with (open(os.path.join(
                 self.dir,
                 f'{self.prefix}{id}'

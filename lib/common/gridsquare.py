@@ -12,8 +12,8 @@ LatLngTuple = Tuple[float, float]
 l1 = 'abcdefghijklmnopqr'
 l2 = '0123456789'
 l3 = 'abcdefghijklmnopqrstuvx'
-gridsquare_reg = '^[A-R]{2}\d{2}([a-x]{2})?$'
-gridsquare_subreg = '([A-R]{2}\d{2}[a-x]{2})'
+gridsquare_reg = r'^[A-R]{2}\d{2}([a-x]{2})?$'
+gridsquare_subreg = r'([A-R]{2}\d{2}[a-x]{2})'
 R = 6371e3 # earth radius
 
 def _norm_gridsquare(gridsquare: str) -> Tuple[int, ...]:

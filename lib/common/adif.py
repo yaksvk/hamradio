@@ -8,7 +8,7 @@ class Adif(LogfileProcessor):
     @staticmethod
     def can_process(text: str) -> bool:
         # returns true if this can parse a text, false if not, should return true for ADIF file contents
-        variables = re.findall('<(\w+):(\d+)>([^<]+)', text)
+        variables = re.findall(r'<(\w+):(\d+)>([^<]+)', text)
         eors = re.findall('(<eor>)', text, flags=re.IGNORECASE)
         return len(variables) > 0 and len(eors) > 0
 
@@ -16,19 +16,19 @@ class Adif(LogfileProcessor):
     def process_adif_variables(text: str) -> dict:
         # ADIF = <variable_name:length>value\s - and substring the value according to
         # length. This should probably be read sequentially, not as a regexp. (value with < will probably suck)
-        variables = re.findall('<(\w+):(\d+)(:\w)?>([^<]+)', text)
+        variables = re.findall(r'<(\w+):(\d+)(:\w)?>([^<]+)', text)
         adif_vars = dict((var[0].upper(), var[3][:int(var[1])]) for var in variables)
         return adif_vars
 
     @staticmethod
     def process_header_comments(text: str) -> dict:
-        variables = re.findall('((\w+)=(\w+))\n', text)
+        variables = re.findall(r'((\w+)=(\w+))\n', text)
         comments = dict((var[1].upper(), var[2]) for var in variables)
         return comments
 
     def init_from_string(self, adif_string: str) -> None:
         # process header 
-        res = re.findall("^(.*?)<EOH>", adif_string, flags=re.MULTILINE | re.DOTALL | re.IGNORECASE)
+        res = re.findall(r"^(.*?)<EOH>", adif_string, flags=re.MULTILINE | re.DOTALL | re.IGNORECASE)
         if res:
             header = res[0]
             # attempt to populate header values using standard adif variable parsing from header
@@ -38,8 +38,8 @@ class Adif(LogfileProcessor):
 
 
         # ignore header
-        data = re.sub("^.*<EOH>", "", adif_string, flags=re.IGNORECASE)
-        items = [ item.strip() for item in re.split("<EOR>", data, flags=re.IGNORECASE) ]
+        data = re.sub(r"^.*<EOH>", "", adif_string, flags=re.IGNORECASE)
+        items = [ item.strip() for item in re.split(r"<EOR>", data, flags=re.IGNORECASE) ]
 
         # process QSOs
         for item in items:
@@ -53,8 +53,8 @@ class Adif(LogfileProcessor):
                 and 'SRX_STRING' in adif_vars
                 and 'STX_STRING' in adif_vars):
 
-                stx = re.findall('^(\d+)', adif_vars['STX_STRING'])
-                srx = re.findall('^(\d+)', adif_vars['SRX_STRING'])
+                stx = re.findall(r'^(\d+)', adif_vars['STX_STRING'])
+                srx = re.findall(r'^(\d+)', adif_vars['SRX_STRING'])
 
                 if stx and srx:
                     adif_vars['STX'] = stx[0]

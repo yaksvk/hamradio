@@ -14,14 +14,14 @@ class SsbLiga(HamActivity):
                 qso.srx_string = qso.srx_string.upper()
                 continue
 
-            if re.match('^[A-Za-z]{3}$', str(getattr(qso, 'srx', ''))):
+            if re.match(r'^[A-Za-z]{3}$', str(getattr(qso, 'srx', ''))):
                 qso.srx_string = qso.srx.upper()
                 continue
 
-            if re.match('^[A-Za-z]{3}$', getattr(qso, 'qth', '')):
+            if re.match(r'^[A-Za-z]{3}$', getattr(qso, 'qth', '')):
                 qso.srx_string = qso.qth.upper()
                 continue
 
-            match = re.findall('^([A-Za-z]{3})\s?', getattr(qso, 'comment',''))
+            match = re.findall(r'^([A-Za-z]{3})\s?', getattr(qso, 'comment',''))
             if match:
                 qso.srx_string = match[0].upper()

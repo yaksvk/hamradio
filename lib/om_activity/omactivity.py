@@ -12,11 +12,11 @@ class OmActivity(HamActivity):
                 continue
 
             if qso.srx_string and qso.stx_string:
-                if re.match('^\d{3}$', getattr(qso, 'srx_string', '')) and re.match('^\d{3}$', getattr(qso, 'stx_string', '')):
+                if re.match(r'^\d{3}$', getattr(qso, 'srx_string', '')) and re.match(r'^\d{3}$', getattr(qso, 'stx_string', '')):
                     qso.srx, qso.stx = qso.srx_string, qso.stx_string
                     continue
 
             # support nums in qso comments like "001 123 blah blah" => STX:001 SRX:123
-            match = re.findall('^((\d+) (\d+))\s?', getattr(qso, 'comment',''))
+            match = re.findall(r'^((\d+) (\d+))\s?', getattr(qso, 'comment',''))
             if match and len(match[0]) == 3:
                 qso.srx, qso.stx = match[0][2], match[0][1]
