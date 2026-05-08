@@ -42,10 +42,6 @@ def _jinja2_filter_time(time):
 def _jinja2_filter_date(date):
     return '-'.join((date[0:4],date[4:6],date[6:8]))
 
-@app.template_filter('edi_date_filter')
-def _jinja2_filter_date(date):
-    return ''.join((date[0:4],date[4:6],date[6:8]))
-
 
 if not os.getenv('DEVELOPMENT', default=False):
     # generic error handlers

@@ -66,17 +66,29 @@ def uploaded_adif(id):
 def export_edi(id):
     log = VhfEdiActivity(id=id)
 
-    # max callsign column width
-    #len1 = len(log.meta['my_call'])
-    len2 = max([len(qso.call) for qso in log.qsos])
+    # custom EDI logic for qsos, additional atttributes
+    unique_calls = set()
+    unique_gridsquares = set()
+
+    for qso in log.qsos:
+
+        # duplicity
+        if qso.call not in unique_calls:
+            unique_calls.add(qso.call)
+            qso.dupe = ''
+        else:
+            qso.dupe = 'D'
+
+        # multipliers
+        if qso.gridsquare not in unique_gridsquares:
+            unique_gridsquares.add(qso.gridsquare)
+            qso.new_gridsquare = 'N'
+        else:
+            qso.new_gridsquare = ''
 
     output = render_template(
         'vkv_edi/export.edi',
         log=log,
-        formats={
-           # 'len1': len1,
-            'len2': len2
-        },
     )
 
     #my_call = log.meta['my_call'].upper()
@@ -91,4 +103,19 @@ def export_edi(id):
             'Content-Disposition': f'attachment; filename="export_{my_call}.edi"',
         }
     )
+
+
+@vkv_edi.app_template_filter('edi_mode_filter')
+def _jinja2_filter_edi_mode(mode):
+    mapping = {
+        'ssb': 1,
+        'cw': 2,
+        'fm': 6,
+    }
+    return mapping.get(mode.lower(), 0)
+
+
+@vkv_edi.app_template_filter('edi_date_filter')
+def _jinja2_filter_edi_date(date):
+    return ''.join((date[0:4], date[4:6], date[6:8]))
 
