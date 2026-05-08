@@ -45,9 +45,20 @@ def uploaded_adif(id):
 
     log = VhfEdiActivity(id=id)
 
+    web = [{
+        'call': qso.call,
+        'from': log.meta['latlng'],
+        'to': qso.latlng,
+        'gridsquare': qso.gridsquare,
+        'distance': qso.distance,
+        'top': qso.top_distance
+    } for qso in log.qsos]
+
     return render_template(
         'vkv_edi/render.html',
         log=log,
+        web=web,
+        me={'map_center': log.meta['latlng']},
     )
 
 

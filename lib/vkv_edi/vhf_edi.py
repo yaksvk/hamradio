@@ -15,10 +15,13 @@ class VhfEdiActivity(HamActivity):
         super().__init__(*args, **kwargs)
 
     def calculate_scores(self):
-
+        
         # required: self.gridsquare
         if 'gridsquare' not in self.meta or not self.meta['gridsquare']:
             raise InvalidUsage('Gridsquare is required for score calculation', status_code=500)
+
+        if self.meta.get('gridsquare'):
+            self.meta['latlng'] = gridsquare2latlng(self.meta['gridsquare'])
 
         for i, qso in enumerate(self.qsos):
             # fix numbers
