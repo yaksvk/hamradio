@@ -3,28 +3,38 @@
 <h2>Export</h2>
 <p><a href="{{ url_for('vkv_edi.export_edi', id=log.id) }}">Stiahnuť EDI</a></p>
 
+<p>Môj lokátor: {{ log.meta.gridsquare }}</p>
+
 <h2>Spojenia</h2>
 
 <table id="qsos" class="table table-bordered">
 <thead>
 <tr>
     <th></th>
+    <th>Dátum</th>
     <th>Čas</th>
     <th>Značka</th>
-    <th>TX</th>
-    <th>RX</th>
-    <th>Okres</th>
+    <th>RST TX</th>
+    <th>RST RX</th>
+    <th>STX</th>
+    <th>SRX</th>
+    <th>Lokátor</th>
+    <th>Vzdialenosť</th>
 </tr>
 </thead>
 <tbody>
 {% for qso in log.qsos %}
 <tr{% if qso.top_distance %} class="top"{% endif %}>
     <td>{{ loop.index }}</td>
-    <td>{{ qso.qso_date|date_filter }} {{ qso.time_on|time_filter }}</td>
+    <td>{{ qso.qso_date|date_filter }}</td>
+    <td>{{ qso.time_on|time_filter }}</td>
     <td><a target="_blank" href="https://www.qrz.com/db/{{ qso.call }}">{{ qso.call }}</a></td>
     <td>{{ qso.rst_sent }}</td>
     <td>{{ qso.rst_rcvd }}</td>
-    <td>{{ qso.srx_string }}</td>
+    <td>{{ "%03d" % qso.stx }}</td>
+    <td>{{ "%03d" % qso.srx }}</td>
+    <td>{{ qso.gridsquare }}</td>
+    <td>{{ qso.distance }}</td>
 </tr>
 {% endfor %}
 </tbody>

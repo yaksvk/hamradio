@@ -137,6 +137,9 @@ def dist_ham(param1: Union[str, LatLngTuple], param2: Union[str, LatLngTuple]) -
     else:
         (lat2, lng2) = gridsquare2latlng(param2)
 
+    # convert to radians
+    lat1, lng1, lat2, lng2 = map(math.radians, [lat1, lng1, lat2, lng2])
+
     dlon = lng2 - lng1
     dlat = lat2 - lat1
     a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2

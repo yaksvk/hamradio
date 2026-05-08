@@ -28,11 +28,13 @@ def upload():
 
         # process file to activity
         act1 = VhfEdiActivity(adif_file=upload_location)
+        act1.meta['gridsquare'] = request.values.get('gridsquare', None)
 
         for attr in ('my_call', 'category', 'email'):
             act1.meta[attr] = request.values.get(attr, None)
 
-        #act1.pre_process()
+        act1.calculate_scores()
+
         id = act1.store()
 
         return redirect(url_for('vkv_edi.uploaded_adif',id=id))
