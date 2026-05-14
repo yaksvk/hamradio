@@ -6,8 +6,11 @@ from typing import Optional
 
 from .tmpstorage import TmpStorage
 from .adif import Adif
+from .dxcc import DXCC
 from .gridsquare import gridsquare2latlng, small_square_distance, is_gridsquare,\
     extract_gridsquare, dist_ham, gridsquare2latlngedges
+
+dxcc = DXCC()
 
 class Qso:
     def __init__(self, adif_vars=None, qso_dict=None):
@@ -22,6 +25,8 @@ class Qso:
         self.srx_string = None
         self.stx_string = None
         self.latlng = None
+        self.dxcc = None
+        self.entity = None
 
         if qso_dict is not None:
             for key, value in qso_dict.items():
@@ -37,6 +42,15 @@ class Qso:
             # process ADIF vars and set gridsquares, etc.
             if hasattr(self, 'gridsquare') and self.gridsquare:
                 self.latlng = gridsquare2latlng(self.gridsquare)
+
+        # callsign prefix lookup to determine DXCC code + country (entity)
+        if not self.entity:
+            print(f"cannot find entity, probing entity for call {self.call}")
+            self.entity = dxcc.entity_or_na(self.call)
+            
+        if not self.dxcc and self.entity:
+            self.dxcc = dxcc.entity_to_code(self.entity)
+
 
     def _probe_gridsquare(self, adif_vars: dict) -> Optional[str]:
             gridsquare = self.gridsquare

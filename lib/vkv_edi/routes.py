@@ -51,7 +51,7 @@ def uploaded_adif(id):
         'to': qso.latlng,
         'gridsquare': qso.gridsquare,
         'distance': qso.distance,
-        'top': qso.top_distance
+        'top': qso.top_distance,
     } for qso in log.qsos]
 
     return render_template(
@@ -69,8 +69,12 @@ def export_edi(id):
     # custom EDI logic for qsos, additional atttributes
     unique_calls = set()
     unique_gridsquares = set()
+    unique_dxcc = set()
 
     for qso in log.qsos:
+
+        print('a')
+        print(qso.dxcc)
 
         # duplicity
         if qso.call not in unique_calls:
@@ -85,6 +89,13 @@ def export_edi(id):
             qso.new_gridsquare = 'N'
         else:
             qso.new_gridsquare = ''
+
+        # dxccs
+        if qso.dxcc not in unique_dxcc:
+            unique_dxcc.add(qso.dxcc)
+            qso.new_dxcc = 'N'
+        else:
+            qso.new_dxcc = ''
 
     output = render_template(
         'vkv_edi/export.edi',

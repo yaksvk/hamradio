@@ -3,5 +3,5 @@ PCall={{log.meta.my_call}}
 PWWLo={{ log.meta.gridsquare }}
 [QSORecords;{{ log.qsos | length }}]
 {%- for qso in log.qsos %}
-{{ qso.qso_date|edi_date_filter }};{{ qso.time_on|replace(":","") }};{{ qso.call }};{{ qso.mode|edi_mode_filter}};{{ qso.rst_sent}};{{ qso.stx }};{{ qso.rst_rcvd}};{{ qso.srx }};;{{ qso.gridsquare }};{{ qso.distance }};;{{ qso.new_gridsquare }};;{{ qso.dupe }}
+{{ qso.qso_date|edi_date_filter }};{{ qso.time_on|replace(":","") }};{{ qso.call }};{{ qso.mode|edi_mode_filter}};{{ qso.rst_sent}};{{ qso.stx }};{{ qso.rst_rcvd}};{{ qso.srx }};;{{ qso.gridsquare }};{{ qso.distance }};;{{ qso.new_gridsquare }};{{ qso.new_dxcc }};{{ qso.dupe }}
 {%- endfor %}

@@ -16,6 +16,8 @@
     <th>Dátum</th>
     <th>Čas</th>
     <th>Značka</th>
+    <th>DXCC</th>
+    <th>Zem</th>
     <th>RST TX</th>
     <th>RST RX</th>
     <th>STX</th>
@@ -31,6 +33,8 @@
     <td>{{ qso.qso_date|date_filter }}</td>
     <td>{{ qso.time_on|time_filter }}</td>
     <td><a target="_blank" href="https://www.qrz.com/db/{{ qso.call }}">{{ qso.call }}</a></td>
+    <td>{{ qso.dxcc }}</td>
+    <td>{{ qso.entity }}</td>
     <td>{{ qso.rst_sent }}</td>
     <td>{{ qso.rst_rcvd }}</td>
     <td>{{ "%03d" % qso.stx }}</td>
