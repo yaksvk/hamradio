@@ -73,9 +73,6 @@ def export_edi(id):
 
     for qso in log.qsos:
 
-        print('a')
-        print(qso.dxcc)
-
         # duplicity
         if qso.call not in unique_calls:
             unique_calls.add(qso.call)

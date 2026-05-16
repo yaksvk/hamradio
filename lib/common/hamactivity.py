@@ -20,13 +20,14 @@ class Qso:
         self.gridsquare = None
         self.rst_rcvd = None
         self.rst_sent = None
-        self.stx = None
-        self.srx = None
-        self.srx_string = None
-        self.stx_string = None
+        self.stx = ''
+        self.srx = ''
+        self.srx_string = ''
+        self.stx_string = ''
         self.latlng = None
         self.dxcc = None
         self.entity = None
+        self.comment = None
 
         if qso_dict is not None:
             for key, value in qso_dict.items():
@@ -45,12 +46,54 @@ class Qso:
 
         # callsign prefix lookup to determine DXCC code + country (entity)
         if not self.entity:
-            print(f"cannot find entity, probing entity for call {self.call}")
             self.entity = dxcc.entity_or_na(self.call)
-            
+
         if not self.dxcc and self.entity:
             self.dxcc = dxcc.entity_to_code(self.entity)
 
+        self._fix_srx_stx()
+
+    def _fix_srx_stx(self):
+        if self.srx is not None:
+            # make sure it is an int
+            try:
+                self.srx = int(self.srx)
+            except Exception:
+                if not self.srx_string:
+                    self.srx_string = self.srx
+                self.srx = None
+
+        if self.stx is not None:
+            # make sure it is an int
+            try:
+                self.stx = int(self.stx)
+            except Exception:
+                if not self.stx_string:
+                    self.stx_string = self.stx
+                self.stx = None
+
+        # if srx and stx are missing, try guessing them from their *_string
+        if not self.stx and self.stx_string:
+            s = self.stx_string.strip()
+            if re.fullmatch(r"\d+", s):
+                self.stx = int(s)
+
+        if not self.srx and self.srx_string:
+            s = self.srx_string.strip()
+            if re.fullmatch(r"\d+", s):
+                self.srx = int(s)
+
+        # if srx and stx is still missing, try guessing it from the comment
+        if not self.srx and not self.stx and self.comment:
+            m = re.search(r'\b(\d+ \d+)\b', self.comment)
+            if m:
+                self.stx, self.srx = map(int, m.group(1).split(' '))
+
+        # if srx is missing, try to guess it from the comment (stx will be sequentially generated in export)
+        if not self.srx and self.comment:
+           m = re.search(r'\b(\d+)\b', self.comment)
+           if m:
+                self.srx = int(m.group(1))
 
     def _probe_gridsquare(self, adif_vars: dict) -> Optional[str]:
             gridsquare = self.gridsquare
@@ -71,7 +114,7 @@ class Qso:
                     if guess is not None:
                         gridsquare = guess
 
-            if not gridsquare and hasattr(self, 'comment'):
+            if not gridsquare and hasattr(self, 'comment') and self.comment is not None:
                 # fall back to guessing gridsquare from comment
                 if hasattr(self, 'comment'):
                     guess = extract_gridsquare(getattr(self, 'comment'))
