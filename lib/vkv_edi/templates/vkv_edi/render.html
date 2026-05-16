@@ -37,10 +37,10 @@
     <td>{{ qso.entity }}</td>
     <td>{{ qso.rst_sent }}</td>
     <td>{{ qso.rst_rcvd }}</td>
-    <td>{{ "%03d" % qso.stx }}</td>
-    <td>{{ "%03d" % qso.srx }}</td>
-    <td>{{ qso.gridsquare }}</td>
-    <td>{{ qso.distance }}</td>
+    <td>{{ qso.stx|emptyzeronone }}</td>
+    <td>{{ qso.srx|emptyzeronone }}</td>
+    <td>{{ qso.gridsquare|emptyzeronone }}</td>
+    <td>{{ qso.distance|emptyzeronone }}</td>
 </tr>
 {% endfor %}
 </tbody>
