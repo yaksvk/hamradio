@@ -52,6 +52,11 @@ def uploaded_adif(id):
 def export_cabrillo(id):
     log = OmActivity(id=id)
 
+    # format srx and stx as strings
+    for qso in log.qsos:
+        qso.srx = str(qso.srx)
+        qso.stx = str(qso.stx)
+
     # max callsign column width
     len1 = len(log.meta['my_call'])
     len2 = max([len(qso.call) for qso in log.qsos])
